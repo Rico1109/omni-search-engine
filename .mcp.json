@@ -1,8 +1,11 @@
 {
   "mcpServers": {
     "omni-search-engine": {
-      "type": "sse",
-      "url": "http://127.0.0.1:8765/sse"
+      "type": "stdio",
+      "command": "/home/rico/Projects/CodeBase/omni-search-engine/venv/bin/python3",
+      "args": ["server.py"],
+      "cwd": "/home/rico/Projects/CodeBase/omni-search-engine",
+      "env": {}
     },
     "unitAI": {
       "type": "stdio",

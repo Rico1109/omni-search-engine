@@ -10,3 +10,17 @@ venv/
 .mypy_cache/
 .ruff_cache/
 check_output*.txt
+
+# Claude Code project settings
+.claude/
+
+# Vector database storage
+chroma_db/
+
+# Database files
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
+
+# Log files
+logs/

@@ -3,7 +3,7 @@ from functools import lru_cache
 from crawlers.markdown_crawler import MarkdownChunker
 from repositories.snippet_repository import VectorStore
 from services.embedding_service import EmbeddingService
-from services.embedding_service import EmbeddingService
+from services.gemini_embedding_service import GeminiEmbeddingService
 from services.indexer_service import VaultIndexer
 from services.rerank_service import RerankService
 from settings import get_settings
@@ -27,13 +27,29 @@ def get_vector_store() -> VectorStore:
 
 
 @lru_cache
-def get_embedding_service() -> EmbeddingService:
+def get_embedding_service() -> EmbeddingService | GeminiEmbeddingService:
     settings = get_settings()
-    return EmbeddingService(
-        api_key=settings.embedding.openai_api_key,
-        model=settings.embedding.model,
-        batch_size=settings.embedding.batch_size,
-    )
+    provider = settings.embedding.provider.lower()
+    
+    if provider == "gemini":
+        return GeminiEmbeddingService(
+            api_key=settings.embedding.gemini_api_key,
+            model=settings.embedding.gemini_model,
+            output_dimensionality=settings.embedding.output_dimensionality,
+            task_type=settings.embedding.task_type,
+            batch_size=settings.embedding.batch_size,
+        )
+    elif provider == "openai":
+        return EmbeddingService(
+            api_key=settings.embedding.openai_api_key,
+            model=settings.embedding.model,
+            batch_size=settings.embedding.batch_size,
+        )
+    else:
+        raise ValueError(
+            f"Unsupported embedding provider: {provider}. "
+            f"Supported providers: 'openai', 'gemini'"
+        )
 
 
 @lru_cache
@@ -63,19 +79,32 @@ def get_fresh_indexer() -> VaultIndexer:
     Useful for background threads (Watcher) to avoid sharing async clients across loops.
     """
     settings = get_settings()
-    # VectorStore is thread-safe (ChromaDB uses SQLite/DuckDB locking or client logic),
-    # but EmbeddingService (AsyncOpenAI/httpx) is not loop-safe if shared.
-
-    fresh_embedding_service = EmbeddingService(
-        api_key=settings.embedding.openai_api_key,
-        model=settings.embedding.model,
-        batch_size=settings.embedding.batch_size,
-    )
+    provider = settings.embedding.provider.lower()
+    
+    # Create fresh embedding service based on provider
+    if provider == "gemini":
+        fresh_embedding_service = GeminiEmbeddingService(
+            api_key=settings.embedding.gemini_api_key,
+            model=settings.embedding.gemini_model,
+            output_dimensionality=settings.embedding.output_dimensionality,
+            task_type=settings.embedding.task_type,
+            batch_size=settings.embedding.batch_size,
+        )
+    elif provider == "openai":
+        fresh_embedding_service = EmbeddingService(
+            api_key=settings.embedding.openai_api_key,
+            model=settings.embedding.model,
+            batch_size=settings.embedding.batch_size,
+        )
+    else:
+        raise ValueError(
+            f"Unsupported embedding provider: {provider}. "
+            f"Supported providers: 'openai', 'gemini'"
+        )
 
     return VaultIndexer(
         vault_path=settings.obsidian_vault_path,
-        vector_store=get_vector_store(), # Safe to share? ChromaDB client might be ok.
-        # Actually ChromaDB PersistentClient is sync, so it's fine.
+        vector_store=get_vector_store(),
         embedding_service=fresh_embedding_service,
         chunker=get_chunker(),
     )
