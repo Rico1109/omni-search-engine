@@ -1,113 +1,314 @@
 # Git Branch Structure for omni-search-engine Refactoring
 
-## Current State
-- Repository: https://github.com/Jaggerxtrm/omni-search-engine
-- Current branch: main
-- Status: Modified from OpenAI to Google APIs
+**Last Updated**: 2026-02-15
+**Current Branch**: `feature/capture-pipeline`
+**Current Phase**: Phase 1 - Foundation
 
-## Branch Strategy
+---
 
-### Main Branch
-- **Purpose**: Stable, production-ready code
-- **Updates**: Only via PR merges from feature branches
+## Repository Tree Structure
 
-### Feature Branches (4 phases)
+```
+UPSTREAM REPOSITORY (Jaggerxtrm)
+┌─────────────────────────────────────────────────────────────┐
+│ github.com/Jaggerxtrm/omni-search-engine                    │
+│ ┌─────────────────────────────────────────────────────────┐ │
+│ │ main (upstream/main)                                    │ │
+│ │ • Original repository baseline                          │ │
+│ │ • Tracked for future upstream sync                      │ │
+│ └─────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+                           │
+                           │ (forked)
+                           ▼
+FORK REPOSITORY (Rico1109)
+┌─────────────────────────────────────────────────────────────┐
+│ github.com/Rico1109/omni-search-engine                      │
+│                                                             │
+│  main (origin/main) ✅                                      │
+│  ├─ Commit: 44bbdc5                                        │
+│  ├─ Status: Baseline with planning docs + Google API       │
+│  ├─ Files: WORKFLOW_TRANSFORMATION_PLAN.md                 │
+│  │         GIT_WORKFLOW.md                                 │
+│  │         services/gemini_embedding_service.py            │
+│  │                                                          │
+│  │                                                          │
+│  ├─► feature/capture-pipeline 🔵 ← ACTIVE                 │
+│  │   ├─ Branch from: main (44bbdc5)                       │
+│  │   ├─ Commit: 0be275d                                   │
+│  │   ├─ Phase: 1 - Foundation                             │
+│  │   ├─ Goal: Implement /capture command                  │
+│  │   ├─ Status: IN PROGRESS                               │
+│  │   └─ Merges to: main (when complete)                   │
+│  │                                                          │
+│  ├─► feature/activity-logging ⚪ (not created yet)        │
+│  │   ├─ Phase: 2 - Refinement + Logging                   │
+│  │   ├─ Goal: /refine + activity tracking                 │
+│  │   └─ Merges to: main (after Phase 1)                   │
+│  │                                                          │
+│  ├─► feature/continuity-system ⚪ (not created yet)       │
+│  │   ├─ Phase: 3 - Continuity System                      │
+│  │   ├─ Goal: /good-morning, /harvest, weekly notes       │
+│  │   └─ Merges to: main (after Phase 2)                   │
+│  │                                                          │
+│  ├─► feature/documentation ⚪ (not created yet)           │
+│  │   ├─ Phase: 4 - Polish + Documentation                 │
+│  │   ├─ Goal: Comprehensive docs + tests                  │
+│  │   └─ Merges to: main (after Phase 3)                   │
+│  │                                                          │
+│  └─► fork-backup (backup)                                 │
+│      ├─ Commit: 1f6cbc9                                   │
+│      ├─ Purpose: Original fork history backup             │
+│      └─ Contains: Credential rotation, Qwen integration   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 
-#### Phase 1: Foundation
+Legend:
+  ✅ = Completed and merged
+  🔵 = Active development
+  ⚪ = Planned (not started)
+  🔴 = Blocked/Issues
+```
+
+---
+
+## Phase Progress Tracker
+
+### ✅ Phase 0: Planning & Setup (COMPLETE)
+- [x] Create WORKFLOW_TRANSFORMATION_PLAN.md
+- [x] Create GIT_WORKFLOW.md
+- [x] Fork repository to Rico1109
+- [x] Configure git remotes (origin/upstream)
+- [x] Create baseline commit on main
+- [x] Create `feature/capture-pipeline` branch
+
+### 🔵 Phase 1: Foundation (IN PROGRESS)
 **Branch**: `feature/capture-pipeline`
-**Goal**: Implement /capture command end-to-end
-**Merges to**: main (after Phase 1 complete)
+**Started**: 2026-02-15
+**Target**: Week 1
 
-#### Phase 2: Refinement + Logging
-**Branch**: `feature/activity-logging`
-**Goal**: /refine skill + activity tracking
-**Merges to**: main (after Phase 2 complete)
+**Tasks**:
+- [ ] Create `/capture` skill structure
+  - [ ] `~/.claude/skills/capture/SKILL.md`
+  - [ ] `~/.claude/skills/capture/scripts/`
+  - [ ] `~/.claude/skills/capture/references/`
+- [ ] Implement core services
+  - [ ] `services/classifier_service.py` - Content type detection
+  - [ ] `services/enricher_service.py` - Frontmatter generation
+  - [ ] `services/placement_service.py` - Folder suggestion
+  - [ ] `services/workflow_service.py` - Orchestration
+- [ ] Update MCP server
+  - [ ] Add `capture_text()` tool to `server.py`
+- [ ] Update dependencies
+  - [ ] Register services in `dependencies.py`
+- [ ] Validation
+  - [ ] Test `/capture` end-to-end
+  - [ ] Verify frontmatter generation
+  - [ ] Verify folder placement
+- [ ] Create PR: `feature/capture-pipeline` → `main`
 
-#### Phase 3: Continuity System
-**Branch**: `feature/continuity-system`
-**Goal**: /good-morning, /harvest, weekly notes
-**Merges to**: main (after Phase 3 complete)
+**Deliverables**:
+- Working `/capture` command
+- Properly structured notes with frontmatter
+- Auto-placement in correct folders
 
-#### Phase 4: Polish
-**Branch**: `feature/documentation`
-**Goal**: Comprehensive docs + testing
-**Merges to**: main (after Phase 4 complete)
+### ⚪ Phase 2: Refinement + Logging (PLANNED)
+**Branch**: `feature/activity-logging` (to be created)
+**Target**: Week 2
 
-## Workflow Commands
+**Tasks**:
+- [ ] Implement `/refine` skill
+- [ ] Create activity logging system
+- [ ] Add event decorators to existing tools
+- [ ] Add activity timeline queries
+- [ ] Create PR: `feature/activity-logging` → `main`
 
-### Starting Phase 1
+### ⚪ Phase 3: Continuity System (PLANNED)
+**Branch**: `feature/continuity-system` (to be created)
+**Target**: Week 3
+
+**Tasks**:
+- [ ] Implement periodic notes structure
+- [ ] Implement `/good-morning` skill
+- [ ] Implement `/harvest` skill
+- [ ] Add task alignment metadata
+- [ ] Implement `/status` skill
+- [ ] Create PR: `feature/continuity-system` → `main`
+
+### ⚪ Phase 4: Polish + Documentation (PLANNED)
+**Branch**: `feature/documentation` (to be created)
+**Target**: Week 4
+
+**Tasks**:
+- [ ] Write comprehensive SKILL.md files
+- [ ] Create reference documentation
+- [ ] Implement error handling
+- [ ] Performance optimization
+- [ ] Integration tests
+- [ ] User onboarding docs
+- [ ] Create PR: `feature/documentation` → `main`
+
+---
+
+## Git Workflow Commands
+
+### Working on Current Phase (Phase 1)
+
 ```bash
-git checkout main
-git pull origin main
-git checkout -b feature/capture-pipeline
-git push -u origin feature/capture-pipeline
-```
-
-### Completing Phase 1
-```bash
+# Ensure you're on the feature branch
 git checkout feature/capture-pipeline
+
+# Make changes
 git add <files>
-git commit -m "feat: implement /capture transformation pipeline"
+git commit -m "feat(capture): <description>"
+
+# Push to remote
 git push origin feature/capture-pipeline
-# Create PR on GitHub: feature/capture-pipeline → main
-# Merge PR after review
+
+# When ready for review
+# Go to: https://github.com/Rico1109/omni-search-engine/pull/new/feature/capture-pipeline
 ```
 
-### Starting Phase 2
+### Completing Current Phase & Starting Next
+
 ```bash
+# 1. Create PR on GitHub (feature/capture-pipeline → main)
+# 2. Review and merge PR
+
+# 3. Update local main
 git checkout main
 git pull origin main
+
+# 4. Create next phase branch
 git checkout -b feature/activity-logging
 git push -u origin feature/activity-logging
+
+# 5. Update this file (GIT_WORKFLOW.md) to mark Phase 1 complete
 ```
 
-*Repeat pattern for Phase 3 and Phase 4*
+### Syncing with Upstream (if needed)
 
-## PR Template (for each phase merge)
+```bash
+# Fetch upstream changes
+git fetch upstream
 
-**Title**: `feat: [Phase X] - [Description]`
+# Merge upstream/main into your main
+git checkout main
+git merge upstream/main
+
+# Push updated main to your fork
+git push origin main
+```
+
+---
+
+## Branch Naming Convention
+
+- **Main**: `main` - Stable, production-ready
+- **Feature**: `feature/<phase-name>` - Phase-specific work
+- **Hotfix**: `hotfix/<issue-name>` - Emergency fixes
+- **Backup**: `<name>-backup` - Saved histories
+
+---
+
+## PR Template
+
+When creating PRs for phase merges, use this template:
+
+**Title**: `feat: [Phase X] - <Phase Name>`
+
+**Example**: `feat: [Phase 1] - Foundation (Capture Pipeline)`
 
 **Body**:
-```
+```markdown
+## Phase Summary
+Phase 1: Foundation - Implement /capture transformation pipeline
+
 ## Changes
-- List key changes
+- ✅ Created classifier service for content type detection
+- ✅ Created enricher service for frontmatter generation
+- ✅ Created placement service for folder suggestions
+- ✅ Created workflow service for orchestration
+- ✅ Added capture_text() MCP tool
+- ✅ Updated dependency injection
+
+## New Files
+- `services/classifier_service.py`
+- `services/enricher_service.py`
+- `services/placement_service.py`
+- `services/workflow_service.py`
+- `~/.claude/skills/capture/SKILL.md`
 
 ## Testing
-- How was it tested
+- [x] `/capture "Meeting with John"` creates properly formatted note
+- [x] Frontmatter includes: created, type, tags, status
+- [x] Content has structure (## Attendees, ## Discussion, etc.)
+- [x] Auto-placement in correct folder
+- [x] No filename collisions
 
 ## Checklist
-- [ ] Code follows project standards
-- [ ] Tests pass
-- [ ] Documentation updated
+- [ ] Code follows project standards (type hints, logging, error handling)
+- [ ] All tests pass
+- [ ] Documentation updated (README.md, USAGE.md)
+- [ ] No breaking changes
 - [ ] Ready for merge to main
+
+## Next Steps
+After merge:
+- Create `feature/activity-logging` branch
+- Begin Phase 2 implementation
 ```
 
-## Current Phase Status
+---
 
-- [x] Planning complete (WORKFLOW_TRANSFORMATION_PLAN.md created)
-- [x] Git structure setup complete
-- [ ] Phase 1: Foundation (feature/capture-pipeline) **← CURRENT**
-- [ ] Phase 2: Refinement + Logging (feature/activity-logging)
-- [ ] Phase 3: Continuity System (feature/continuity-system)
-- [ ] Phase 4: Polish (feature/documentation)
+## Repository Information
 
-## Repository Structure
+**Fork (Work Here)**:
+- URL: `https://github.com/Rico1109/omni-search-engine`
+- Remote: `origin`
+- Purpose: Active development
 
-**Fork**: `Rico1109/omni-search-engine` (work here)
-**Upstream**: `Jaggerxtrm/omni-search-engine` (original repo)
+**Upstream (Original)**:
+- URL: `https://github.com/Jaggerxtrm/omni-search-engine`
+- Remote: `upstream`
+- Purpose: Track original repo, potential future contributions
 
-**Remotes:**
+**Local Configuration**:
+```bash
+# View remotes
+git remote -v
+
+# View branches
+git branch -a
+
+# View current status
+git status
 ```
-origin    https://github.com/Rico1109/omni-search-engine.git
-upstream  https://github.com/Jaggerxtrm/omni-search-engine
-```
 
-**Branches:**
-- `main` - Stable baseline (planning docs + Google API migration)
-- `feature/capture-pipeline` - Phase 1 work (ACTIVE)
-- `fork-backup` - Original fork commits backup
+---
 
-**Next Steps:**
-1. ✅ On `feature/capture-pipeline` branch
-2. Start implementing Phase 1 services (classifier, enricher, placement, workflow)
-3. When complete: Create PR from `feature/capture-pipeline` → `main`
+## Quick Reference
+
+| Command | Description |
+|---------|-------------|
+| `git checkout feature/capture-pipeline` | Switch to Phase 1 branch |
+| `git status` | Check current changes |
+| `git log --oneline --graph --all -10` | View git history tree |
+| `git push origin feature/capture-pipeline` | Push current work |
+| `git pull origin main` | Sync with main branch |
+| `git fetch upstream` | Get upstream changes |
+
+---
+
+## Notes
+
+- **Always work on feature branches**, never directly on main
+- **Create PRs** for all phase merges for review/documentation
+- **Update this file** after completing each phase
+- **Backup important work** before major git operations
+- **Test thoroughly** before creating phase completion PRs
+
+---
+
+**Last Commit on Current Branch**: `0be275d` - "docs: update git workflow with current repository state"
+**Next Milestone**: Complete Phase 1 implementation → Create PR → Merge to main
