@@ -85,7 +85,29 @@ git push -u origin feature/activity-logging
 ## Current Phase Status
 
 - [x] Planning complete (WORKFLOW_TRANSFORMATION_PLAN.md created)
-- [ ] Phase 1: Foundation (feature/capture-pipeline)
+- [x] Git structure setup complete
+- [ ] Phase 1: Foundation (feature/capture-pipeline) **← CURRENT**
 - [ ] Phase 2: Refinement + Logging (feature/activity-logging)
 - [ ] Phase 3: Continuity System (feature/continuity-system)
 - [ ] Phase 4: Polish (feature/documentation)
+
+## Repository Structure
+
+**Fork**: `Rico1109/omni-search-engine` (work here)
+**Upstream**: `Jaggerxtrm/omni-search-engine` (original repo)
+
+**Remotes:**
+```
+origin    https://github.com/Rico1109/omni-search-engine.git
+upstream  https://github.com/Jaggerxtrm/omni-search-engine
+```
+
+**Branches:**
+- `main` - Stable baseline (planning docs + Google API migration)
+- `feature/capture-pipeline` - Phase 1 work (ACTIVE)
+- `fork-backup` - Original fork commits backup
+
+**Next Steps:**
+1. ✅ On `feature/capture-pipeline` branch
+2. Start implementing Phase 1 services (classifier, enricher, placement, workflow)
+3. When complete: Create PR from `feature/capture-pipeline` → `main`
